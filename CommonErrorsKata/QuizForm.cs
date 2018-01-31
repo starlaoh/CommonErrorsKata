@@ -33,6 +33,7 @@ namespace CommonErrorsKata
             lstAnswers.Click += LstAnswers_Click;
             StartTimer();
         }
+
         private async void StartTimer()
         {
             await Task.Run(() =>
@@ -48,20 +49,14 @@ namespace CommonErrorsKata
 
         private void LstAnswers_Click(object sender, EventArgs e)
         {
-
             _time = 100;
-            var tokens = _visibleImageName.Split(' ');
             var selected = _possibleAnswers[lstAnswers.SelectedIndex];
-            //TODO:  Figure out what is a valid answer.
 
-            if (selected != null && selected == _visibleImageName)
-            {
-                _answerQueue.Enqueue(new TrueFalseAnswer(true));
-            }
-            else
-            {
+            if (selected == null || selected != _visibleImageName)
                 _answerQueue.Enqueue(new TrueFalseAnswer(false));
-            }
+            else
+                _answerQueue.Enqueue(new TrueFalseAnswer(true));
+
             Next();
         }
 
