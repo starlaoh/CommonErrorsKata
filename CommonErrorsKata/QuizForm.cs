@@ -12,6 +12,7 @@ namespace CommonErrorsKata
     {
         private readonly AnswerQueue<TrueFalseAnswer> _answerQueue;
         private readonly string[] _files;
+        private readonly string[] _possibleAnswers;
         private readonly SynchronizationContext _synchronizationContext;
         private int _time = 100;
         private string _currentBaseName;
@@ -21,8 +22,8 @@ namespace CommonErrorsKata
             InitializeComponent();
             _synchronizationContext = SynchronizationContext.Current;
             _files = Directory.GetFiles(Environment.CurrentDirectory +  @"..\..\..\ErrorPics");
-            var possibleAnswers = new[] { "Missing File", "null instance", "divide by zero" };
-            lstAnswers.DataSource = possibleAnswers;
+            _possibleAnswers = new[] { "Missing File", "null instance", "divide by zero" };
+            lstAnswers.DataSource = _possibleAnswers;
             _answerQueue = new AnswerQueue<TrueFalseAnswer>(15);
             Next();
             lstAnswers.Click += LstAnswers_Click;
@@ -45,8 +46,14 @@ namespace CommonErrorsKata
         {
             _time = 100;
             var tokens = _currentBaseName.Split(' ');
+            var selected = _possibleAnswers[lstAnswers.SelectedIndex];
             //TODO:  Figure out what is a valid answer.
-            _answerQueue.Enqueue(new TrueFalseAnswer(true));
+
+            if (selected != null && selected == (string) lstAnswers.SelectedItem)
+            {
+                _answerQueue.Enqueue(new TrueFalseAnswer(true));
+            }
+
             Next();
         }
 
