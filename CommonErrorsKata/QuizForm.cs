@@ -16,17 +16,15 @@ namespace CommonErrorsKata
         private readonly SynchronizationContext _synchronizationContext;
         private readonly int _maxAnswers = 15;
         private int _time = 100;
-        private string _visibleImageName;
+        private string _visibleImagePath;
 
         public CommonErrorsForm()
         {
             InitializeComponent();
             _synchronizationContext = SynchronizationContext.Current;
             _files = Directory.GetFiles(Environment.CurrentDirectory + @"..\..\..\ErrorPics");
-
-            //_possibleAnswers = _files.Select(f) => f.Split(@"\".ToCharArray()).Last().Replace(".png", " ")).ToArray();
-
-            _possibleAnswers = new[] { "Missing File", "Null Instance", "Divide By Zero" };
+            _possibleAnswers = _files.Select(f => Path.GetFileName(f)?.Replace(".png", " ")).ToArray();
+            //_possibleAnswers = new[] { "Missing File", "Null Instance", "Divide By Zero" };
             lstAnswers.DataSource = _possibleAnswers;
             _answerQueue = new AnswerQueue<TrueFalseAnswer>(_maxAnswers);
             Next();
@@ -51,11 +49,7 @@ namespace CommonErrorsKata
         {
             _time = 100;
             var selected = _possibleAnswers[lstAnswers.SelectedIndex];
-
-            if (selected == null || selected != _visibleImageName)
-                _answerQueue.Enqueue(new TrueFalseAnswer(false));
-            else
-                _answerQueue.Enqueue(new TrueFalseAnswer(true));
+            _answerQueue.Enqueue(new TrueFalseAnswer(selected == _visibleImagePath));
 
             Next();
         }
@@ -70,7 +64,7 @@ namespace CommonErrorsKata
             }
             label1.Text = _answerQueue.Grade + "%";
             var file = _files.GetRandom();
-            _visibleImageName = Path.GetFileName(file) != null ? Path.GetFileName(file)?.Replace(".png", "") : null;
+            _visibleImagePath = Path.GetFileName(file)?.Replace(".png", "");
             pbImage.ImageLocation = file;
         }
 
